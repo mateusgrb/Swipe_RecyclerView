@@ -557,6 +557,15 @@ public class SwipeListView extends RecyclerView {
     }
 
     /**
+     * Sets a View.OnLongClickListener for the list items
+     *
+     * @param onItemLongClickListener Listener
+     */
+    public void setOnItemLongClickListener(View.OnLongClickListener onItemLongClickListener) {
+        touchListener.setOnItemLongClickListener(onItemLongClickListener);
+    }
+
+    /**
      * Resets scrolling
      */
     public void resetScrolling() {

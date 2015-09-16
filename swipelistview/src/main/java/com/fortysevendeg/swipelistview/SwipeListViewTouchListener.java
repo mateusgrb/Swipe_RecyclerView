@@ -108,6 +108,8 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
     private int oldSwipeActionRight;
     private int oldSwipeActionLeft;
 
+    private View.OnLongClickListener onItemLongClickListener;
+
     /**
      * Constructor
      *
@@ -155,20 +157,22 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
             }
         });
 
-        frontView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (swipeOpenOnLongPress) {
-                    if (downPosition >= 0) {
-                        openAnimate(childPosition);
+        if (onItemLongClickListener != null) {
+            frontView.setOnLongClickListener(onItemLongClickListener);
+        } else {
+            frontView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (swipeOpenOnLongPress) {
+                        if (downPosition >= 0) {
+                            openAnimate(childPosition);
+                        }
                     }
-                } else {
-                    // do nothing
+                    return false;
                 }
-                return false;
-            }
 
-        });
+            });
+        }
     }
 
     /**
@@ -1136,6 +1140,10 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                 enableDisableViewGroup((ViewGroup) view, enabled);
             }
         }
+    }
+
+    public void setOnItemLongClickListener(View.OnLongClickListener onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
     }
 
 }
