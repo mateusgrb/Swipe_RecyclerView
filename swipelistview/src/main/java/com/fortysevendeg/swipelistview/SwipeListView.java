@@ -37,15 +37,15 @@ import java.util.List;
  * ListView subclass that provides the swipe functionality
  */
 public class SwipeListView extends RecyclerView {
-    
+
     /**
      * log tag
-    */
+     */
     public final static String TAG = "SwipeListView";
-	
+
     /**
-    * whether debug
-    */
+     * whether debug
+     */
     public final static boolean DEBUG = false;
 
     /**
@@ -82,11 +82,6 @@ public class SwipeListView extends RecyclerView {
      * Dismisses the cell when swiped over
      */
     public final static int SWIPE_ACTION_DISMISS = 1;
-
-    /**
-     * Marks the cell as checked when swiped and release
-     */
-    public final static int SWIPE_ACTION_CHOICE = 2;
 
     /**
      * No action when swiped
@@ -251,8 +246,8 @@ public class SwipeListView extends RecyclerView {
         // Clean pressed state (if dismiss is fire from a cell, to this cell, with a press drawable, in a swipelistview
         // when this cell will be recycle it will still have his pressed state. This ensure the pressed state is
         // cleaned.
-        for(int j=0; j<((ViewGroup)convertView).getChildCount(); ++j) {
-            View nextChild = ((ViewGroup)convertView).getChildAt(j);
+        for (int j = 0; j < ((ViewGroup) convertView).getChildCount(); ++j) {
+            View nextChild = ((ViewGroup) convertView).getChildAt(j);
             nextChild.setPressed(false);
         }
     }
@@ -309,10 +304,10 @@ public class SwipeListView extends RecyclerView {
 //            }
 //        });
 
-        adapter.registerAdapterDataObserver(new AdapterDataObserver(){
+        adapter.registerAdapterDataObserver(new AdapterDataObserver() {
 
             @Override
-            public void onChanged(){
+            public void onChanged() {
 
                 super.onChanged();
                 onListChanged();
@@ -324,11 +319,11 @@ public class SwipeListView extends RecyclerView {
     }
 
     @Override
-    public void setLayoutManager(LayoutManager layoutManager){
+    public void setLayoutManager(LayoutManager layoutManager) {
 
         super.setLayoutManager(layoutManager);
-        mLayoutManager=(LinearLayoutManager)layoutManager;
-        if(touchListener!=null){
+        mLayoutManager = (LinearLayoutManager) layoutManager;
+        if (touchListener != null) {
 
             touchListener.setLayoutManager(mLayoutManager);
         }
@@ -588,8 +583,8 @@ public class SwipeListView extends RecyclerView {
 
     public void setOnlyOneOpenedWhenSwipe(boolean onlyOneOpenedWhenSwipe) {
 
-            	touchListener.setOnlyOneOpenedWhenSwipe(onlyOneOpenedWhenSwipe);
-           }
+        touchListener.setOnlyOneOpenedWhenSwipe(onlyOneOpenedWhenSwipe);
+    }
 
     /**
      * Set if all items opened will be closed when the user moves the ListView

@@ -163,7 +163,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                         openAnimate(childPosition);
                     }
                 } else {
-                    swapChoiceState(childPosition);
+                    // do nothing
                 }
                 return false;
             }
@@ -366,32 +366,6 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
     }
 
     /**
-     * Swap choice state in item
-     *
-     * @param position position of list
-     */
-    private void swapChoiceState(int position) {
-        int lastCount = getCountSelected();
-        boolean lastChecked = checked.get(position);
-        checked.set(position, !lastChecked);
-        int count = lastChecked ? lastCount - 1 : lastCount + 1;
-        if (lastCount == 0 && count == 1) {
-            swipeListView.onChoiceStarted();
-            closeOpenedItems();
-            setActionsTo(SwipeListView.SWIPE_ACTION_CHOICE);
-        }
-        if (lastCount == 1 && count == 0) {
-            swipeListView.onChoiceEnded();
-            returnOldActions();
-        }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-//            swipeListView.setItemChecked(position, !lastChecked);
-//        }
-        swipeListView.onChoiceChanged(position, !lastChecked);
-        reloadChoiceStateInView(frontView, position);
-    }
-
-    /**
      * Unselected choice state in item
      */
     protected void unselectedChoiceStates() {
@@ -546,9 +520,6 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
         if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_DISMISS) {
             generateDismissAnimate(parentView, swap, swapRight, position);
         }
-        if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
-            generateChoiceAnimate(view, position);
-        }
     }
 
     /**
@@ -685,9 +656,6 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
 
     private void resetCell() {
         if (downPosition != ListView.INVALID_POSITION) {
-            if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
-                backView.setVisibility(View.VISIBLE);
-            }
             frontView.setClickable(opened.get(downPosition));
             frontView.setLongClickable(opened.get(downPosition));
             frontView = null;
@@ -885,9 +853,6 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
 
 
                 generateAnimate(frontView, swap, swapRight, downPosition);
-                if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
-                    swapChoiceState(downPosition);
-                }
 
                 velocityTracker.recycle();
                 velocityTracker = null;
@@ -951,10 +916,6 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                             swipeCurrentAction = SwipeListView.SWIPE_ACTION_DISMISS;
                         } else if (!swipingRight && swipeActionLeft == SwipeListView.SWIPE_ACTION_DISMISS) {
                             swipeCurrentAction = SwipeListView.SWIPE_ACTION_DISMISS;
-                        } else if (swipingRight && swipeActionRight == SwipeListView.SWIPE_ACTION_CHOICE) {
-                            swipeCurrentAction = SwipeListView.SWIPE_ACTION_CHOICE;
-                        } else if (!swipingRight && swipeActionLeft == SwipeListView.SWIPE_ACTION_CHOICE) {
-                            swipeCurrentAction = SwipeListView.SWIPE_ACTION_CHOICE;
                         } else {
                             swipeCurrentAction = SwipeListView.SWIPE_ACTION_REVEAL;
                         }
@@ -965,9 +926,6 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                     cancelEvent.setAction(MotionEvent.ACTION_CANCEL |
                             (MotionEventCompat.getActionIndex(motionEvent) << MotionEventCompat.ACTION_POINTER_INDEX_SHIFT));
                     swipeListView.onTouchEvent(cancelEvent);
-                    if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
-                        backView.setVisibility(View.GONE);
-                    }
                 }
 
                 if (swiping && downPosition != ListView.INVALID_POSITION) {
@@ -1030,11 +988,7 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
             }
             swipingRight = !swipingRight;
             swipeCurrentAction = swipeActionRight;
-            if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
-                backView.setVisibility(View.GONE);
-            } else {
-                backView.setVisibility(View.VISIBLE);
-            }
+            backView.setVisibility(View.VISIBLE);
         }
         if (posX < 0 && swipingRight) {
             if (SwipeListView.DEBUG) {
@@ -1042,23 +996,12 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
             }
             swipingRight = !swipingRight;
             swipeCurrentAction = swipeActionLeft;
-            if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
-                backView.setVisibility(View.GONE);
-            } else {
-                backView.setVisibility(View.VISIBLE);
-            }
+            backView.setVisibility(View.VISIBLE);
         }
         if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_DISMISS) {
             setTranslationX(parentView, deltaX);
             setAlpha(parentView, Math.max(0f, Math.min(1f,
                     1f - 2f * Math.abs(deltaX) / viewWidth)));
-        } else if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
-            if ((swipingRight && deltaX > 0 && posX < DISPLACE_CHOICE)
-                    || (!swipingRight && deltaX < 0 && posX > -DISPLACE_CHOICE)
-                    || (swipingRight && deltaX < DISPLACE_CHOICE)
-                    || (!swipingRight && deltaX > -DISPLACE_CHOICE)) {
-                setTranslationX(frontView, deltaX);
-            }
         } else {
             setTranslationX(frontView, deltaX);
         }
