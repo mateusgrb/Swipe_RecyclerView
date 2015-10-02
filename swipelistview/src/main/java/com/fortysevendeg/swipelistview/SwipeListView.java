@@ -315,6 +315,11 @@ public class SwipeListView extends RecyclerView {
 
             }
 
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                closeOpenedItems();
+            }
         });
     }
 
